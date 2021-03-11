@@ -80,7 +80,7 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-      
+
           <li class="nav-item">
             <router-link to="/home" exact class="nav-link">
               <i class="nav-icon fas fa-th"></i>
@@ -132,8 +132,8 @@
 <script src="{{ asset('js/app.js') }}"></script>
 <script src="{{ asset('assets/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('assets/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
-<script src="{{ asset('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('assets/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+<script src="{{ asset('assets/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
 
 
 <script>

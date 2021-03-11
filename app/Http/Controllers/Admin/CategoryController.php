@@ -37,7 +37,18 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //Check Validation
+        $this->validate($request,[
+            'name' => 'required|min:3|max:50|unique:categories',
+            'status' => 'required',
+
+     ]);
+//Insert database
+     Category::create([
+        'name' => $request->name,
+        'slug' => $request->name,
+        'status' => $request->status,
+     ]);
     }
 
     /**

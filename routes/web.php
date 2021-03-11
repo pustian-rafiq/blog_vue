@@ -22,7 +22,10 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+//this is used for dynamic route changing using vue router
 Route::get('/{anypath}', [HomeController::class, 'index'])->where('any', '.*');
 
 // Route::get('/posts', [PostController::class, 'index']);
 // Route::get('/category',[CategoryController::class, 'index']);
+//category routes here
+Route::post('/create-category', [CategoryController::class, 'store'])->name('create-category');

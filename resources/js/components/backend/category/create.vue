@@ -23,48 +23,54 @@
 
     <!-- Main content -->
     <section class="content">
-
+          <div class="row">
+          <!-- left column -->
+              <div class="col-md-6">
          <!-- Horizontal Form -->
             <div class="card card-info">
               <div class="card-header">
                 <h3 class="card-title">Add New Category</h3>
+                 <router-link to="/categories" class="btn btn-sm btn-info float-right">Category List</router-link>
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form class="form-horizontal">
+              <form class="form-horizontal" @submit.prevent="addCategory">
                 <div class="card-body">
                   <div class="form-group row">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label">Category Name</label>
-                    <div class="col-sm-10">
-                      <input type="text" class="form-control" id="inputEmail3" placeholder="Email">
+                    <label for="inputEmail3" class="col-sm-4 col-form-label">Category Name</label>
+                    <div class="col-sm-8">
+                      <input :class="{ 'is-invalid': form.errors.has('name') }"  type="text" class="form-control" id="inputEmail3" name="name" placeholder="Enter category name" v-model="form.name">
+                        <has-error :form="form" field="name"></has-error>
                     </div>
                   </div>
                   <div class="form-group row">
-                    <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
-                    <div class="col-sm-10">
-                      <input type="password" class="form-control" id="inputPassword3" placeholder="Password">
+                    <label for="inputEmail3" class="col-sm-4 col-form-label">Status</label>
+                   <div class="form-check form-check-inline">
+                       <input class="form-check-input" type="radio" id="inlineCheckbox1" value="1" name="status" v-model="form.status">
+                       <label class="form-check-label" for="inlineCheckbox1">Active</label>
+
                     </div>
-                  </div>
-                  <div class="form-group row">
-                    <div class="offset-sm-2 col-sm-10">
-                      <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck2">
-                        <label class="form-check-label" for="exampleCheck2">Remember me</label>
-                      </div>
+
+
+                     <div class="form-check form-check-inline">
+                       <input class="form-check-input" type="radio" id="inlineCheckbox1" name="status" value="0" v-model="form.status">
+                       <label class="form-check-label" for="inlineCheckbox1">Inactive</label>
                     </div>
+                    <span :class="{ 'is-invalid': form.errors.has('status') }"></span>
+                    <has-error :form="form" field="status"></has-error>
                   </div>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                  <button type="submit" class="btn btn-info">Add Category</button>
-                  <button type="submit" class="btn btn-default float-right">Cancel</button>
+                  <button type="submit" :disabled="form.busy" class="btn btn-info">Add Category</button>
+                  <button type="reset" class="btn btn-default float-right">Cancel</button>
                 </div>
                 <!-- /.card-footer -->
               </form>
             </div>
-            <!-- /.card -->
-
-    </section>
+              </div>
+          </div>            <!-- /.card -->
+            </section>
 
       </div>
     <!-- /.content -->
@@ -73,6 +79,40 @@
 
 <script>
  export default{
+  name: "create",
+  data(){
+      return{
+          form: new Form({
+              name: null,
+              status: null
+          })
+      }
+  },
+  methods: {
+      addCategory: function(){
+          let test = this
+          this.form.post('/create-category')
+                .then(function(response){
+                    if(response){
+                          Toast.fire({
+                          icon: 'success',
+                          title: 'Category added successfully'
+                    })
+                    }else{
+                          Toast.fire({
+                          icon: 'error',
+                          title: 'Category added successfully'
+                    })
+                    }
+                    //this is used for redirecting category index page after adding a category
+                   // test.$router.push("/categories");
 
+                   //After adding a category we reset our input box
+                   test.form.name = null;
+                   test.form.status = null;
+
+                });
+      }
+  }
  }
 </script>
