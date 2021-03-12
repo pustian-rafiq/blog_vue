@@ -29,20 +29,32 @@ const Toast = Swal.mixin({
     }
   })
   window.Toast = Toast
- 
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-
+  //Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 //Vue.component('home', require('./components/backend/home.vue').default);
+ //import toastr
+ import toastr from 'toastr'
+ window.toastr = toastr
+//Import Vuex
+import Vuex from 'vuex'
+Vue.use(Vuex)
+//import store
+import storeData from './store/store'
+const store = new Vuex.Store(
+  storeData,
+)
+//import moment js for date formatting
+import {filter} from './filter/filter'
 
 
   const router = new VueRouter({
     routes,
-    mode: 'history'
+    //mode: 'history'
   });
 
 
 const app = new Vue({
     el: '#app',
-    router
+    router,
+    store
 });

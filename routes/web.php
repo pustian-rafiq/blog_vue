@@ -23,9 +23,13 @@ Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 //this is used for dynamic route changing using vue router
-Route::get('/{anypath}', [HomeController::class, 'index'])->where('any', '.*');
+//Route::get('/{anypath}', [HomeController::class, 'index'])->where('any', '.*');
 
 // Route::get('/posts', [PostController::class, 'index']);
 // Route::get('/category',[CategoryController::class, 'index']);
 //category routes here
 Route::post('/create-category', [CategoryController::class, 'store'])->name('create-category');
+
+//category routes from vuex
+Route::get('/get-categories', [CategoryController::class, 'index']);
+Route::get('/remove-category/{id}', [CategoryController::class, 'destroy']);
