@@ -34,8 +34,12 @@
                 <table id="example1" class="table table-bordered table-striped">
                   <thead>
                   <tr>
+                      <!-- <th>
+                          <input type="checkbox">
+                      </th> -->
                     <th>SL NO.</th>
                     <th>Category Name</th>
+                    <th>Slug Name</th>
                     <th>Status</th>
                     <th>Created At</th>
                     <th>Action</th>
@@ -43,14 +47,18 @@
                   </thead>
                   <tbody>
                      <tr v-for="(category,index) in showCategory" :key="index">
+                         <!-- <td>
+                          <input type="checkbox" :value="category.id" v-model="categoryIds">
+                      </td> -->
                         <td>{{++index}}</td>
                         <td>{{ category.name }}</td>
+                        <td>{{ category.slug }}</td>
                         <td  v-if="category.status==1"><span class="badge badge-success">Active</span></td>
                         <td v-else-if="category.status==0"><span class="badge badge-danger">Inactive</span></td>
                          <td>{{ category.created_at | time }}</td>
                         <td>
-                            <router-link to="/edit-category" class="btn btn-sm btn-success" >Edit</router-link>
-                            <button class="btn btn-sm btn-danger" @click="removeCategory(category.id)">Delete</button>
+                            <router-link :to="`/edit-category/${category.slug}`" class="btn btn-sm btn-success" >Edit</router-link>
+                            <button class="btn btn-sm btn-danger" @click="removeCategory(category.slug)">Delete</button>
                         </td>
 
                     </tr>
@@ -60,7 +68,9 @@
                     <tr>
                         <th>SL NO.</th>
                         <th>Category Name</th>
+                        <th>Slug Name</th>
                         <th>Status</th>
+                        <th>Created At</th>
                         <th>Action</th>
 
                     </tr>
@@ -80,6 +90,11 @@
 <script>
  export default{
      name: "Index",
+     data:function() {
+         return{
+             categoryIds: []
+         }
+     },
      mounted(){
          this.$store.dispatch("getCategories");
      },
@@ -91,7 +106,7 @@
 
      },
      methods: {
-         removeCategory: function(id){
+         removeCategory: function(slug){
 //Category delete using sweet alert
                 Swal.fire({
                     title: 'Are you sure?',
@@ -103,7 +118,7 @@
                     confirmButtonText: 'Yes, delete it!'
                     }).then((result) => {
                     if (result.isConfirmed) {
-                      axios.get("remove-category/"+id).then((response)=>{
+                      axios.get("remove-category/"+slug).then((response)=>{
                    //call dispatch method to return index page and show remaining data without any loading
                         this.$store.dispatch("getCategories");
                             Swal.fire(

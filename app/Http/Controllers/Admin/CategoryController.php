@@ -48,7 +48,7 @@ class CategoryController extends Controller
 //Insert database
      Category::create([
         'name' => $request->name,
-        'slug' => $request->name,
+        'slug' => slugify($request->name),
         'status' => $request->status,
      ]);
     }
@@ -70,9 +70,11 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($slug)
     {
-        //
+        //get the getCategories
+        $category = Category::where('slug',$slug)->first();
+        return response()->json(['category' => $category],200);
     }
 
     /**
@@ -82,9 +84,28 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+         //Check Validation
+         $this->validate($request,[
+            'name' => 'required|min:3|max:50|unique:categories,name,'.$request->id,
+            'status' => 'required',
+
+     ]);
+     //Update database
+        $category = Category::find($request->id);
+        $category->name = $request->name;
+        $category->slug = slugify($request->name);
+        $category->status = $request->status;
+
+        if($category->save()){
+
+        $success = true;
+        }else{
+            $success = false;
+        }
+
+        return response()->json(['success' => $success],200);
     }
 
     /**
@@ -93,9 +114,17 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($slug)
     {
-        $category = Category::find($id);
-        $category->delete();
+        //delete category using slug
+        $category = Category::where('slug',$slug)->first();
+        //return succes to the response thorugh which we can check the category is deleted or not.
+        if($category->delete()){
+            $success = true;
+        }else{
+            $success = false;
+        }
+
+        return response()->json(['success' => $success],200);
     }
 }

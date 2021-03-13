@@ -34,7 +34,7 @@
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form class="form-horizontal" @submit.prevent="addCategory">
+              <form class="form-horizontal" @submit.prevent="updateCategory">
                 <div class="card-body">
                   <div class="form-group row">
                     <label for="inputEmail3" class="col-sm-4 col-form-label">Category Name</label>
@@ -62,14 +62,15 @@
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                  <button type="submit" :disabled="form.busy" class="btn btn-info">Add Category</button>
+                  <button type="submit" :disabled="form.busy" class="btn btn-info">Update Category</button>
                   <button type="reset" class="btn btn-default float-right">Cancel</button>
                 </div>
                 <!-- /.card-footer -->
               </form>
-            </div>
+            </div> <!-- /.card -->
               </div>
-          </div>            <!-- /.card -->
+          </div>
+
             </section>
 
       </div>
@@ -83,39 +84,32 @@
   data(){
       return{
           form: new Form({
+              id: null,
               name: null,
               status: null
           })
       }
   },
+  mounted(){
+      this.getCategory();
+  },
   methods: {
-      addCategory: function(){
-          let test = this
-          this.form.post('/create-category')
-                .then(function(response){
-                    //Show alert using sweet alert2
-                    // if(response){
-                    //       Toast.fire({
-                    //       icon: 'success',
-                    //       title: 'Category added successfully'
-                    // })
-                    // }else{
-                    //       Toast.fire({
-                    //       icon: 'error',
-                    //       title: 'Category added successfully'
-                    // })
-                    // }
-                    //this is used for redirecting category index page after adding a category
-                   // test.$router.push("/categories");
-
-
-                    //Show alert using Toastr
-                    toastr.success('Category added successfully!',{timeout: 5000});
-                   //After adding a category we reset our input box
-                   test.form.name = null;
-                   test.form.status = null;
+      updateCategory: function(){
+          let get_this = this;
+          this.form.post('/update-category')
+                .then((response)=>{
+                      //Show alert using Toastr
+                    toastr.success('Category updated successfully!',{timeout: 5000});
+                    get_this.$router.push("/categories");
 
                 });
+      },
+      getCategory: function(){
+          let get_this = this
+          axios.get("/edit-category/"+ this.$route.params.slug).then((response)=>{
+              //response.data.category--- ekhane category namta hocce categoryController theke response ermaddhome pathano nam.So same name hoite hbe
+                get_this.form.fill(response.data.category);//using this command set the data of input field
+          })
       }
   }
  }

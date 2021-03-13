@@ -33,3 +33,5 @@ Route::post('/create-category', [CategoryController::class, 'store'])->name('cre
 //category routes from vuex
 Route::get('/get-categories', [CategoryController::class, 'index']);
 Route::get('/remove-category/{id}', [CategoryController::class, 'destroy']);
+Route::get('/edit-category/{slug}', [CategoryController::class, 'edit']);
+Route::post('/update-category', [CategoryController::class, 'update']);
