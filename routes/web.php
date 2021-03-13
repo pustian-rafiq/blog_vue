@@ -28,10 +28,17 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 // Route::get('/posts', [PostController::class, 'index']);
 // Route::get('/category',[CategoryController::class, 'index']);
 //category routes here
-Route::post('/create-category', [CategoryController::class, 'store'])->name('create-category');
+
 
 //category routes from vuex
+Route::post('/add-category', [CategoryController::class, 'store']);
 Route::get('/get-categories', [CategoryController::class, 'index']);
 Route::get('/remove-category/{id}', [CategoryController::class, 'destroy']);
 Route::get('/edit-category/{slug}', [CategoryController::class, 'edit']);
 Route::post('/update-category', [CategoryController::class, 'update']);
+//Post routes from vuex
+Route::post('/add-post', [PostController::class, 'store']);
+Route::get('/get-posts', [PostController::class, 'index']);
+Route::get('/remove-post/{slug}', [PostController::class, 'destroy']);
+Route::get('/edit-post/{slug}', [PostController::class, 'edit']);
+Route::post('/update-post', [PostController::class, 'update']);

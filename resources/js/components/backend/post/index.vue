@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Category Page</li>
+              <li class="breadcrumb-item active">Post Page</li>
             </ol>
           </div>
         </div>
@@ -26,8 +26,8 @@
 
         <div class="card card-grey">
               <div class="card-header">
-                <h3 class="card-title">Category List</h3>
-                <router-link to="/create-category" class="btn btn-sm btn-info float-right">Add New Category</router-link>
+                <h3 class="card-title">Post List</h3>
+                <router-link to="/create-post" class="btn btn-sm btn-info float-right">Add New Post</router-link>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -38,29 +38,35 @@
                           <input type="checkbox">
                       </th> -->
                     <th>SL NO.</th>
-                    <th>Category Name</th>
-                    <th>Slug Name</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Content</th>
+                    <th>Thumbnail</th>
+                    <th>Create By</th>
                     <th>Status</th>
-                    <th>Created At</th>
-                    <th>Action</th>
+
+                    <th style="width: 130px">Action</th>
                   </tr>
                   </thead>
                   <tbody>
-                     <tr v-for="(category,index) in showCategory" :key="index">
+                     <tr v-for="(post,index) in showPost" :key="index">
                          <!-- <td>
                           <input type="checkbox" :value="category.id" v-model="categoryIds">
                       </td> -->
                         <td>{{++index}}</td>
-                        <!-- this filter method subString is used for showing fied character -->
-                        <!-- <td>{{ category.name | subString(2)}}</td> -->
-                        <td>{{ category.name  }}</td>
-                        <td>{{ category.slug }}</td>
-                        <td  v-if="category.status==1"><span class="badge badge-success">Active</span></td>
-                        <td v-else-if="category.status==0"><span class="badge badge-danger">Inactive</span></td>
-                         <td>{{ category.created_at | time }}</td>
-                        <td>
-                            <router-link :to="`/edit-category/${category.slug}`" class="btn btn-sm btn-success" >Edit</router-link>
-                            <button class="btn btn-sm btn-danger" @click="removeCategory(category.slug)">Delete</button>
+                       <!-- this filter method subString is used for showing fied character -->
+                       <td>{{ post.title  }}</td>
+
+                         <td>{{ post.category.name  }}</td>
+                        <td>{{ post.content | subString(40) }}</td>
+                        <td><img width="60px" :src="post.thumbnail"></td>
+                       <td>{{ post.user.name }}</td>
+                        <td  v-if="post.status=='draft'"><span class="badge badge-success">{{ post.status | capitalize }}</span></td>
+                        <td v-if="post.status=='published'"><span class="badge badge-danger">{{ post.status | capitalize }}</span></td>
+
+                        <td >
+                           <router-link :to="`/edit-category/${post.slug}`" class="btn btn-sm btn-success"  title="Edit" ><i class="fas fa-edit"></i></router-link>
+                            <button class="btn btn-sm btn-danger" @click="removePost(post.slug)" title="Delete"><i class="fas fa-trash" ></i></button>
                         </td>
 
                     </tr>
@@ -68,12 +74,15 @@
                   </tbody>
                   <tfoot>
                     <tr>
-                        <th>SL NO.</th>
-                        <th>Category Name</th>
-                        <th>Slug Name</th>
-                        <th>Status</th>
-                        <th>Created At</th>
-                        <th>Action</th>
+                    <th>SL NO.</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Content</th>
+                    <th>Thumbnail</th>
+                    <th>Create By</th>
+                    <th>Status</th>
+
+                    <th>Action</th>
 
                     </tr>
                   </tfoot>
@@ -94,21 +103,21 @@
      name: "Index",
      data:function() {
          return{
-             categoryIds: []
+            postIds: []
          }
      },
      mounted(){
-         this.$store.dispatch("getCategories");
+         this.$store.dispatch("getPosts");
      },
      computed:{
-         showCategory(){
-             return this.$store.getters.categories;
+         showPost(){
+             return this.$store.getters.posts;
              //ekhane categories er namer sathe store.js file er getters er vitore categories name same hoite hbe
          }
 
      },
      methods: {
-         removeCategory: function(slug){
+         removePost: function(slug){
 //Category delete using sweet alert
                 Swal.fire({
                     title: 'Are you sure?',
@@ -120,12 +129,12 @@
                     confirmButtonText: 'Yes, delete it!'
                     }).then((result) => {
                     if (result.isConfirmed) {
-                      axios.get("remove-category/"+slug).then((response)=>{
+                      axios.get("remove-post/"+slug).then((response)=>{
                    //call dispatch method to return index page and show remaining data without any loading
-                        this.$store.dispatch("getCategories");
+                        this.$store.dispatch("getPosts");
                             Swal.fire(
                                 'Deleted!',
-                                'Your file has been deleted.',
+                                'Your Post has been deleted.',
                                 'success'
                                 )
                         }).catch((error)=>{

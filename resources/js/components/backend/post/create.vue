@@ -91,7 +91,7 @@
   methods: {
       addCategory: function(){
           let test = this
-          this.form.post('/add-category')
+          this.form.post('/create-category')
                 .then(function(response){
                     //Show alert using sweet alert2
                     // if(response){

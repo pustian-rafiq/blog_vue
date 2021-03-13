@@ -14,8 +14,10 @@ class PostController extends Controller
      */
     public function index()
     {
-        $post = Post::with('category','user')->get();
-        return $post;
+        $posts = Post::with('category','user')->get();
+        return response()->json([
+            'posts' => $posts,
+        ], 200);
     }
 
     /**
@@ -79,8 +81,18 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($slug)
     {
-        //
-    }
+       //delete post using slug
+       $post = Post::where('slug',$slug)->first();
+       //return succes to the response thorugh which we can check the post is deleted or not.
+       if($post->delete()){
+           $success = true;
+       }else{
+           $success = false;
+       }
+
+       return response()->json(['success' => $success],200);
+   }
+    
 }

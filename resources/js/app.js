@@ -40,8 +40,10 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 //import store
 import storeData from './store/store'
+import postStore from './store/poststore'
 const store = new Vuex.Store(
   storeData,
+  postStore,
 )
 //import moment js for date formatting
 import {filter} from './filter/filter'
