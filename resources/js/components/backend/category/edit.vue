@@ -99,7 +99,7 @@
           this.form.post('/update-category')
                 .then((response)=>{
                       //Show alert using Toastr
-                    toastr.success('Category updated successfully!',{timeout: 5000});
+                    toastr.success('Category updated successfully!',{timeout: 3000});
                     get_this.$router.push("/categories");
 
                 });

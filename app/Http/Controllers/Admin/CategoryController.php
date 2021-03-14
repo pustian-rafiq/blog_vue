@@ -127,4 +127,31 @@ class CategoryController extends Controller
 
         return response()->json(['success' => $success],200);
     }
+
+    public function removeItems(Request $request){
+        $categoryIds = $request->dataForController;
+        $sl = 0;
+        foreach($categoryIds as $id){
+            $cat_id = Category::find($id);
+            $cat_id->delete();
+            $sl++;
+        }
+
+        $success = $sl > 0? true: false;
+        return response()->json(['success'=> $success, 'total' => $sl]);
+    }
+    //This function change the status of the category
+    public function changeStatus(Request $request){
+        $categoryIds = $request->dataForController;
+        $sl = 0;
+        foreach($categoryIds as $id){
+            $cat_id = Category::find($id);
+            $cat_id->status = $request->status;
+            $cat_id->save();
+            $sl++;
+        }
+
+        $success = $sl > 0;
+        return response()->json(['success'=> $success, 'total' => $sl]);
+    }
 }

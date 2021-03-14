@@ -36,6 +36,9 @@ Route::get('/get-categories', [CategoryController::class, 'index']);
 Route::get('/remove-category/{id}', [CategoryController::class, 'destroy']);
 Route::get('/edit-category/{slug}', [CategoryController::class, 'edit']);
 Route::post('/update-category', [CategoryController::class, 'update']);
+//remove all categories using checkbox
+Route::post('/categories/remove-items', [CategoryController::class, 'removeItems']);
+Route::post('/categories/change-status', [CategoryController::class, 'changeStatus']);
 //Post routes from vuex
 Route::post('/add-post', [PostController::class, 'store']);
 Route::get('/get-posts', [PostController::class, 'index']);

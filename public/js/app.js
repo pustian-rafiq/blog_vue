@@ -4586,7 +4586,7 @@ __webpack_require__.r(__webpack_exports__);
       this.form.post('/update-category').then(function (response) {
         //Show alert using Toastr
         toastr.success('Category updated successfully!', {
-          timeout: 5000
+          timeout: 3000
         });
         get_this.$router.push("/categories");
       });
@@ -4705,15 +4705,48 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "Index",
   data: function data() {
     return {
-      categoryIds: []
+      selected: [],
+      selectedAll: false,
+      isSelected: false
     };
   },
   mounted: function mounted() {
-    this.$store.dispatch("getCategories");
+    this.$store.dispatch("getCategories"); // this.emptyData();
+  },
+  watch: {
+    selected: function selected(_selected) {
+      //ei function name must be selected array er name hoite hbe
+      this.selectedAll = _selected.length === this.showCategory.length;
+      this.isSelected = _selected.length > 0; //return true
+    }
   },
   computed: {
     showCategory: function showCategory() {
@@ -4742,13 +4775,50 @@ __webpack_require__.r(__webpack_exports__);
             Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
           })["catch"](function (error) {});
         }
-      }); //Here toastr message alert is used
-      //     axios.get("remove-category/"+id).then((response)=>{
-      //        //call dispatch method to return index page and show remaining data without any loading
-      //        this.$store.dispatch("getCategories");
-      //       toastr.success('Category deleted successfully!',{timeout: 5000});
-      //     }).catch((error)=>{
-      //   })
+      });
+    },
+    emptyData: function emptyData() {
+      return this.showCategory.length < 1; //Short form conditional Statement--- 1 theke soto hoile true return korbe
+      //console.log(this.showCategory);
+    },
+    selectAll: function selectAll(event) {
+      var _this2 = this;
+
+      if (event.target.checked === false) {
+        this.selected = []; //console.log("test");
+      } else {
+        this.showCategory.forEach(function (category) {
+          if (_this2.selected.indexOf(category.id) === -1) {
+            _this2.selected.push(category.id);
+          }
+        });
+      }
+    },
+    //This function delete the selected category
+    removeItems: function removeItems(selected) {
+      var _this3 = this;
+
+      axios.post("/categories/remove-items", {
+        dataForController: selected
+      }).then(function (response) {
+        //This three data property is nulled after deleteing category..jno delete er por action button ta unchecked hoia jai
+        _this3.selected = [], _this3.selectedAll = false, _this3.isSelected = false, _this3.$store.dispatch("getCategories"); //it is called for showing category index page after deleting data
+
+        toastr.success(response.data.total + ' Category has been successfully deleted.');
+      })["catch"](function (error) {});
+    },
+    //This function change the status of the category
+    changeStatus: function changeStatus(selected, status) {
+      var _this4 = this;
+
+      axios.post("/categories/change-status", {
+        dataForController: selected,
+        status: status
+      }).then(function (response) {
+        _this4.selected = [], _this4.selectedAll = false, _this4.isSelected = false, _this4.$store.dispatch("getCategories"); //it is called for showing category index page after deleting data
+
+        toastr.success(response.data.total + ' Category has been successfully changed.');
+      })["catch"](function (error) {});
     }
   }
 });
@@ -5220,8 +5290,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var toastr__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(toastr__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _store_store__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./store/store */ "./resources/js/store/store.js");
-/* harmony import */ var _store_poststore__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./store/poststore */ "./resources/js/store/poststore.js");
-/* harmony import */ var _filter_filter__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./filter/filter */ "./resources/js/filter/filter.js");
+/* harmony import */ var _filter_filter__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./filter/filter */ "./resources/js/filter/filter.js");
 //import bootstarp
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js"); //import vue js
 
@@ -5261,10 +5330,10 @@ window.toastr = (toastr__WEBPACK_IMPORTED_MODULE_4___default()); //Import Vuex
 
 Vue.use(vuex__WEBPACK_IMPORTED_MODULE_5__.default); //import store
 
+ //import postStore from './store/poststore'
 
-
-var store = new vuex__WEBPACK_IMPORTED_MODULE_5__.default.Store(_store_store__WEBPACK_IMPORTED_MODULE_6__.default, _store_poststore__WEBPACK_IMPORTED_MODULE_7__.default); //import moment js for date formatting
-
+var store = new vuex__WEBPACK_IMPORTED_MODULE_5__.default.Store(_store_store__WEBPACK_IMPORTED_MODULE_6__.default);
+//import moment js for date formatting
 
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__.default({
   routes: _routes_routes__WEBPACK_IMPORTED_MODULE_1__.routes //mode: 'history'
@@ -5408,42 +5477,6 @@ var routes = [{
   path: '/edit-post/:slug',
   component: _components_backend_post_edit__WEBPACK_IMPORTED_MODULE_6__.default
 }];
-
-/***/ }),
-
-/***/ "./resources/js/store/poststore.js":
-/*!*****************************************!*\
-  !*** ./resources/js/store/poststore.js ***!
-  \*****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  state: {
-    fetchPost: []
-  },
-  getters: {
-    posts: function posts(state) {
-      return state.fetchPost;
-    }
-  },
-  actions: {
-    getPosts: function getPosts(data) {
-      axios.get("get-posts").then(function (response) {
-        data.commit("fetchPosts", response.data.posts);
-      })["catch"](function (error) {});
-    }
-  },
-  mutations: {
-    fetchPosts: function fetchPosts(state, data) {
-      return state.fetchPost = data;
-    }
-  }
-});
 
 /***/ }),
 
@@ -68544,100 +68577,305 @@ var render = function() {
       _vm._m(0),
       _vm._v(" "),
       _c("section", { staticClass: "content" }, [
-        _c("div", { staticClass: "card card-grey" }, [
-          _c(
-            "div",
-            { staticClass: "card-header" },
-            [
-              _c("h3", { staticClass: "card-title" }, [
-                _vm._v("Category List")
-              ]),
-              _vm._v(" "),
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-md-12" }, [
+            _c("div", { staticClass: "card" }, [
               _c(
-                "router-link",
-                {
-                  staticClass: "btn btn-sm btn-info float-right",
-                  attrs: { to: "/create-category" }
-                },
-                [_vm._v("Add New Category")]
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c("div", { staticClass: "card-body" }, [
-            _c(
-              "table",
-              {
-                staticClass: "table table-bordered table-striped",
-                attrs: { id: "example1" }
-              },
-              [
-                _vm._m(1),
-                _vm._v(" "),
-                _c(
-                  "tbody",
-                  _vm._l(_vm.showCategory, function(category, index) {
-                    return _c("tr", { key: index }, [
-                      _c("td", [_vm._v(_vm._s(++index))]),
-                      _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(category.name))]),
-                      _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(category.slug))]),
-                      _vm._v(" "),
-                      category.status == 1
-                        ? _c("td", [
-                            _c("span", { staticClass: "badge badge-success" }, [
-                              _vm._v("Active")
-                            ])
-                          ])
-                        : category.status == 0
-                        ? _c("td", [
-                            _c("span", { staticClass: "badge badge-danger" }, [
-                              _vm._v("Inactive")
-                            ])
-                          ])
-                        : _vm._e(),
-                      _vm._v(" "),
-                      _c("td", [
-                        _vm._v(_vm._s(_vm._f("time")(category.created_at)))
+                "div",
+                { staticClass: "card-header" },
+                [
+                  _c("h3", { staticClass: "card-title" }, [
+                    _vm._v("Category List")
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "router-link",
+                    {
+                      staticClass: "btn btn-sm btn-info float-right",
+                      attrs: { to: "/create-category" }
+                    },
+                    [_vm._v("Add New Category")]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body" }, [
+                _c("table", { staticClass: "table table-bordered" }, [
+                  _c("thead", [
+                    _c("tr", [
+                      _c("th", [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.selectedAll,
+                              expression: "selectedAll"
+                            }
+                          ],
+                          attrs: {
+                            disabled: _vm.emptyData(),
+                            type: "checkbox"
+                          },
+                          domProps: {
+                            checked: Array.isArray(_vm.selectedAll)
+                              ? _vm._i(_vm.selectedAll, null) > -1
+                              : _vm.selectedAll
+                          },
+                          on: {
+                            click: _vm.selectAll,
+                            change: function($event) {
+                              var $$a = _vm.selectedAll,
+                                $$el = $event.target,
+                                $$c = $$el.checked ? true : false
+                              if (Array.isArray($$a)) {
+                                var $$v = null,
+                                  $$i = _vm._i($$a, $$v)
+                                if ($$el.checked) {
+                                  $$i < 0 &&
+                                    (_vm.selectedAll = $$a.concat([$$v]))
+                                } else {
+                                  $$i > -1 &&
+                                    (_vm.selectedAll = $$a
+                                      .slice(0, $$i)
+                                      .concat($$a.slice($$i + 1)))
+                                }
+                              } else {
+                                _vm.selectedAll = $$c
+                              }
+                            }
+                          }
+                        })
                       ]),
                       _vm._v(" "),
-                      _c(
-                        "td",
-                        [
-                          _c(
-                            "router-link",
-                            {
-                              staticClass: "btn btn-sm btn-success",
-                              attrs: { to: "/edit-category/" + category.slug }
-                            },
-                            [_vm._v("Edit")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-sm btn-danger",
+                      _c("th", { staticStyle: { width: "10px" } }, [
+                        _vm._v("Sl No")
+                      ]),
+                      _vm._v(" "),
+                      _c("th", [_vm._v("Category Name")]),
+                      _vm._v(" "),
+                      _c("th", [_vm._v("Slug Name")]),
+                      _vm._v(" "),
+                      _c("th", [_vm._v("Status")]),
+                      _vm._v(" "),
+                      _c("th", [_vm._v("Created At")]),
+                      _vm._v(" "),
+                      _c("th", { staticStyle: { width: "130px" } }, [
+                        _vm._v("Action")
+                      ])
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "tbody",
+                    [
+                      _vm._l(_vm.showCategory, function(category, index) {
+                        return _c("tr", { key: index }, [
+                          _c("td", [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.selected,
+                                  expression: "selected"
+                                }
+                              ],
+                              attrs: { type: "checkbox" },
+                              domProps: {
+                                value: category.id,
+                                checked: Array.isArray(_vm.selected)
+                                  ? _vm._i(_vm.selected, category.id) > -1
+                                  : _vm.selected
+                              },
                               on: {
-                                click: function($event) {
-                                  return _vm.removeCategory(category.slug)
+                                change: function($event) {
+                                  var $$a = _vm.selected,
+                                    $$el = $event.target,
+                                    $$c = $$el.checked ? true : false
+                                  if (Array.isArray($$a)) {
+                                    var $$v = category.id,
+                                      $$i = _vm._i($$a, $$v)
+                                    if ($$el.checked) {
+                                      $$i < 0 &&
+                                        (_vm.selected = $$a.concat([$$v]))
+                                    } else {
+                                      $$i > -1 &&
+                                        (_vm.selected = $$a
+                                          .slice(0, $$i)
+                                          .concat($$a.slice($$i + 1)))
+                                    }
+                                  } else {
+                                    _vm.selected = $$c
+                                  }
                                 }
                               }
-                            },
-                            [_vm._v("Delete")]
+                            })
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(++index))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(category.name))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(category.slug))]),
+                          _vm._v(" "),
+                          category.status == 1
+                            ? _c("td", [
+                                _c(
+                                  "span",
+                                  { staticClass: "badge badge-success" },
+                                  [_vm._v("Active")]
+                                )
+                              ])
+                            : category.status == 0
+                            ? _c("td", [
+                                _c(
+                                  "span",
+                                  { staticClass: "badge badge-danger" },
+                                  [_vm._v("Inactive")]
+                                )
+                              ])
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _c("td", [
+                            _vm._v(_vm._s(_vm._f("time")(category.created_at)))
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "td",
+                            [
+                              _c(
+                                "router-link",
+                                {
+                                  staticClass: "btn btn-sm btn-success",
+                                  attrs: {
+                                    to: "/edit-category/" + category.slug
+                                  }
+                                },
+                                [_vm._v("Edit")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-sm btn-danger",
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.removeCategory(category.slug)
+                                    }
+                                  }
+                                },
+                                [_vm._v("Delete")]
+                              )
+                            ],
+                            1
                           )
-                        ],
-                        1
-                      )
-                    ])
-                  }),
-                  0
-                ),
-                _vm._v(" "),
-                _vm._m(2)
-              ]
-            )
+                        ])
+                      }),
+                      _vm._v(" "),
+                      _vm.emptyData() ? _c("tr", [_vm._m(1)]) : _vm._e(),
+                      _vm._v(" "),
+                      !_vm.emptyData()
+                        ? _c("tr", [
+                            _c("td", { attrs: { colspan: "12" } }, [
+                              _c("div", { staticClass: "dropdown" }, [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-info dropdown-toggle",
+                                    attrs: {
+                                      disabled: !_vm.isSelected,
+                                      type: "button",
+                                      id: "dropdownMenuButton1",
+                                      "data-toggle": "dropdown"
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                                            Actions\n                                        "
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "ul",
+                                  {
+                                    staticClass: "dropdown-menu",
+                                    attrs: {
+                                      "aria-labelledby": "dropdownMenuButton1"
+                                    }
+                                  },
+                                  [
+                                    _c("li", [
+                                      _c(
+                                        "button",
+                                        {
+                                          staticClass: "dropdown-item",
+                                          attrs: { type: "button" },
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.removeItems(
+                                                _vm.selected
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [_vm._v("Remove All")]
+                                      )
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("li", [
+                                      _c(
+                                        "button",
+                                        {
+                                          staticClass: "dropdown-item",
+                                          attrs: { type: "button" },
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.changeStatus(
+                                                _vm.selected,
+                                                1
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [_vm._v("Active")]
+                                      )
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("li", [
+                                      _c(
+                                        "button",
+                                        {
+                                          staticClass: "dropdown-item",
+                                          attrs: { type: "button" },
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.changeStatus(
+                                                _vm.selected,
+                                                0
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [_vm._v("Inactive")]
+                                      )
+                                    ])
+                                  ]
+                                )
+                              ])
+                            ])
+                          ])
+                        : _vm._e()
+                    ],
+                    2
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _vm._m(2)
+            ])
           ])
         ])
       ])
@@ -68675,19 +68913,9 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", [
-        _c("th", [_vm._v("SL NO.")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Category Name")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Slug Name")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Status")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Created At")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Action")])
+    return _c("td", { attrs: { colspan: "12" } }, [
+      _c("h5", { staticClass: "text-center text-danger" }, [
+        _vm._v(" Data Not Found!")
       ])
     ])
   },
@@ -68695,19 +68923,37 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("tfoot", [
-      _c("tr", [
-        _c("th", [_vm._v("SL NO.")]),
+    return _c("div", { staticClass: "card-footer clearfix" }, [
+      _c("ul", { staticClass: "pagination pagination-sm m-0 float-right" }, [
+        _c("li", { staticClass: "page-item" }, [
+          _c("a", { staticClass: "page-link", attrs: { href: "#" } }, [
+            _vm._v("«")
+          ])
+        ]),
         _vm._v(" "),
-        _c("th", [_vm._v("Category Name")]),
+        _c("li", { staticClass: "page-item" }, [
+          _c("a", { staticClass: "page-link", attrs: { href: "#" } }, [
+            _vm._v("1")
+          ])
+        ]),
         _vm._v(" "),
-        _c("th", [_vm._v("Slug Name")]),
+        _c("li", { staticClass: "page-item" }, [
+          _c("a", { staticClass: "page-link", attrs: { href: "#" } }, [
+            _vm._v("2")
+          ])
+        ]),
         _vm._v(" "),
-        _c("th", [_vm._v("Status")]),
+        _c("li", { staticClass: "page-item" }, [
+          _c("a", { staticClass: "page-link", attrs: { href: "#" } }, [
+            _vm._v("3")
+          ])
+        ]),
         _vm._v(" "),
-        _c("th", [_vm._v("Created At")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Action")])
+        _c("li", { staticClass: "page-item" }, [
+          _c("a", { staticClass: "page-link", attrs: { href: "#" } }, [
+            _vm._v("»")
+          ])
+        ])
       ])
     ])
   }
