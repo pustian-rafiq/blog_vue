@@ -120,7 +120,7 @@
          return{
              selected: [],
              selectedAll: false,
-            isSelected: false,
+             isSelected: false,
          }
      },
      mounted(){
@@ -143,30 +143,19 @@
      methods: {
          removeCategory: function(slug){
 //Category delete using sweet alert
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
-                    }).then((result) => {
-                    if (result.isConfirmed) {
-                      axios.get("remove-category/"+slug).then((response)=>{
-                   //call dispatch method to return index page and show remaining data without any loading
-                        this.$store.dispatch("getCategories");
-                            Swal.fire(
-                                'Deleted!',
-                                'Your file has been deleted.',
-                                'success'
-                                )
-                        }).catch((error)=>{
+                this.confirm(()=>{
+                     axios.get("remove-category/"+slug).then((response)=>{
+               //call dispatch method to return index page and show remaining data without any loading
+                    this.$store.dispatch("getCategories");
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                            )
+                    }).catch((error)=>{
 
-                    })
-
-                    }
-                    })
+                })
+             });
 
          },
          emptyData: function(){
@@ -189,6 +178,7 @@
          },
            //This function delete the selected category
          removeItems: function(selected){
+                 this.confirm(()=>{
              axios.post("/categories/remove-items",{dataForController: selected}).then((response)=>{
                    //This three data property is nulled after deleteing category..jno delete er por action button ta unchecked hoia jai
                   this.selected= [],
@@ -199,15 +189,17 @@
              }).catch((error)=>{
 
              })
+          });
          },
            //This function change the status of the category
           changeStatus: function(selected, status){
+                let msg = status === 1? "active" : "Inactive";
              axios.post("/categories/change-status",{dataForController: selected, status: status}).then((response)=>{
                   this.selected= [],
                   this.selectedAll= false,
                   this.isSelected= false,
                   this.$store.dispatch("getCategories"); //it is called for showing category index page after deleting data
-                  toastr.success(response.data.total + ' Category has been successfully changed.');
+                  toastr.success(response.data.total + ' Category has been successfully '+ msg);
              }).catch((error)=>{
 
              })

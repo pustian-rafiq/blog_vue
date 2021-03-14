@@ -47,7 +47,8 @@ const store = new Vuex.Store(
 )
 //import moment js for date formatting
 import {filter} from './filter/filter'
-
+//import mixin
+import './helpers/mixin'
 
   const router = new VueRouter({
     routes,

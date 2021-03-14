@@ -94,5 +94,30 @@ class PostController extends Controller
 
        return response()->json(['success' => $success],200);
    }
-    
+   public function removeItems(Request $request){
+    $postIds = $request->dataForController;
+    $sl = 0;
+    foreach($postIds as $id){
+        $post_id = Post::find($id);
+        $post_id->delete();
+        $sl++;
+    }
+
+    $success = $sl > 0? true: false;
+    return response()->json(['success'=> $success, 'total' => $sl]);
+}
+//This function change the status of the category
+public function changeStatus(Request $request){
+    $postIds = $request->dataForController;
+    $sl = 0;
+    foreach($postIds as $id){
+        $post_id = Post::find($id);
+        $post_id->status = $request->status;
+        $post_id->save();
+        $sl++;
+    }
+
+    $success = $sl > 0;
+    return response()->json(['success'=> $success, 'total' => $sl]);
+}
 }

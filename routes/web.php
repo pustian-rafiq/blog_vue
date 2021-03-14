@@ -45,3 +45,6 @@ Route::get('/get-posts', [PostController::class, 'index']);
 Route::get('/remove-post/{slug}', [PostController::class, 'destroy']);
 Route::get('/edit-post/{slug}', [PostController::class, 'edit']);
 Route::post('/update-post', [PostController::class, 'update']);
+//remove all categories using checkbox
+Route::post('/posts/remove-items', [PostController::class, 'removeItems']);
+Route::post('/posts/change-status', [PostController::class, 'changeStatus']);

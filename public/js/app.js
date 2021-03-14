@@ -4758,23 +4758,13 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       //Category delete using sweet alert
-      Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      }).then(function (result) {
-        if (result.isConfirmed) {
-          axios.get("remove-category/" + slug).then(function (response) {
-            //call dispatch method to return index page and show remaining data without any loading
-            _this.$store.dispatch("getCategories");
+      this.confirm(function () {
+        axios.get("remove-category/" + slug).then(function (response) {
+          //call dispatch method to return index page and show remaining data without any loading
+          _this.$store.dispatch("getCategories");
 
-            Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
-          })["catch"](function (error) {});
-        }
+          Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
+        })["catch"](function (error) {});
       });
     },
     emptyData: function emptyData() {
@@ -4798,26 +4788,29 @@ __webpack_require__.r(__webpack_exports__);
     removeItems: function removeItems(selected) {
       var _this3 = this;
 
-      axios.post("/categories/remove-items", {
-        dataForController: selected
-      }).then(function (response) {
-        //This three data property is nulled after deleteing category..jno delete er por action button ta unchecked hoia jai
-        _this3.selected = [], _this3.selectedAll = false, _this3.isSelected = false, _this3.$store.dispatch("getCategories"); //it is called for showing category index page after deleting data
+      this.confirm(function () {
+        axios.post("/categories/remove-items", {
+          dataForController: selected
+        }).then(function (response) {
+          //This three data property is nulled after deleteing category..jno delete er por action button ta unchecked hoia jai
+          _this3.selected = [], _this3.selectedAll = false, _this3.isSelected = false, _this3.$store.dispatch("getCategories"); //it is called for showing category index page after deleting data
 
-        toastr.success(response.data.total + ' Category has been successfully deleted.');
-      })["catch"](function (error) {});
+          toastr.success(response.data.total + ' Category has been successfully deleted.');
+        })["catch"](function (error) {});
+      });
     },
     //This function change the status of the category
     changeStatus: function changeStatus(selected, status) {
       var _this4 = this;
 
+      var msg = status === 1 ? "active" : "Inactive";
       axios.post("/categories/change-status", {
         dataForController: selected,
         status: status
       }).then(function (response) {
         _this4.selected = [], _this4.selectedAll = false, _this4.isSelected = false, _this4.$store.dispatch("getCategories"); //it is called for showing category index page after deleting data
 
-        toastr.success(response.data.total + ' Category has been successfully changed.');
+        toastr.success(response.data.total + ' Category has been successfully ' + msg);
       })["catch"](function (error) {});
     }
   }
@@ -5222,15 +5215,51 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "Index",
   data: function data() {
     return {
-      postIds: []
+      selected: [],
+      selectedAll: false,
+      isSelected: false
     };
   },
   mounted: function mounted() {
     this.$store.dispatch("getPosts");
+  },
+  watch: {
+    selected: function selected(_selected) {
+      //ei function name must be selected array er name hoite hbe
+      this.selectedAll = _selected.length === this.showPost.length;
+      this.isSelected = _selected.length > 0; //return true
+    }
   },
   computed: {
     showPost: function showPost() {
@@ -5241,31 +5270,60 @@ __webpack_require__.r(__webpack_exports__);
     removePost: function removePost(slug) {
       var _this = this;
 
-      //Category delete using sweet alert
-      Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      }).then(function (result) {
-        if (result.isConfirmed) {
-          axios.get("remove-post/" + slug).then(function (response) {
-            //call dispatch method to return index page and show remaining data without any loading
-            _this.$store.dispatch("getPosts");
+      this.confirm(function () {
+        axios.get("remove-post/" + slug).then(function (response) {
+          //call dispatch method to return index page and show remaining data without any loading
+          _this.$store.dispatch("getPosts");
 
-            Swal.fire('Deleted!', 'Your Post has been deleted.', 'success');
-          })["catch"](function (error) {});
-        }
-      }); //Here toastr message alert is used
-      //     axios.get("remove-category/"+id).then((response)=>{
-      //        //call dispatch method to return index page and show remaining data without any loading
-      //        this.$store.dispatch("getCategories");
-      //       toastr.success('Category deleted successfully!',{timeout: 5000});
-      //     }).catch((error)=>{
-      //   })
+          Swal.fire('Deleted!', 'Your Post has been deleted.', 'success');
+        })["catch"](function (error) {});
+      });
+    },
+    emptyData: function emptyData() {
+      return this.showPost.length < 1; //Short form conditional Statement--- 1 theke soto hoile true return korbe
+      //console.log(this.showCategory);
+    },
+    selectAll: function selectAll(event) {
+      var _this2 = this;
+
+      if (event.target.checked === false) {
+        this.selected = []; //console.log("test");
+      } else {
+        this.showPost.forEach(function (post) {
+          if (_this2.selected.indexOf(post.id) === -1) {
+            _this2.selected.push(post.id);
+          }
+        });
+      }
+    },
+    //This function delete the selected category
+    removeItems: function removeItems(selected) {
+      var _this3 = this;
+
+      this.confirm(function () {
+        axios.post("/posts/remove-items", {
+          dataForController: selected
+        }).then(function (response) {
+          //This three data property is nulled after deleteing category..jno delete er por action button ta unchecked hoia jai
+          _this3.selected = [], _this3.selectedAll = false, _this3.isSelected = false, _this3.$store.dispatch("getPosts"); //it is called for showing category index page after deleting data
+
+          toastr.success(response.data.total + ' Post has been successfully deleted.');
+        })["catch"](function (error) {});
+      });
+    },
+    //This function change the status of the category
+    changeStatus: function changeStatus(selected, status) {
+      var _this4 = this;
+
+      var msg = status === 'published' ? "published" : "draft";
+      axios.post("/posts/change-status", {
+        dataForController: selected,
+        status: status
+      }).then(function (response) {
+        _this4.selected = [], _this4.selectedAll = false, _this4.isSelected = false, _this4.$store.dispatch("getPosts"); //it is called for showing category index page after deleting data
+
+        toastr.success(response.data.total + ' Category has been successfully ' + msg);
+      })["catch"](function (error) {});
     }
   }
 });
@@ -5291,6 +5349,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _store_store__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./store/store */ "./resources/js/store/store.js");
 /* harmony import */ var _filter_filter__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./filter/filter */ "./resources/js/filter/filter.js");
+/* harmony import */ var _helpers_mixin__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./helpers/mixin */ "./resources/js/helpers/mixin.js");
 //import bootstarp
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js"); //import vue js
 
@@ -5334,6 +5393,8 @@ Vue.use(vuex__WEBPACK_IMPORTED_MODULE_5__.default); //import store
 
 var store = new vuex__WEBPACK_IMPORTED_MODULE_5__.default.Store(_store_store__WEBPACK_IMPORTED_MODULE_6__.default);
 //import moment js for date formatting
+ //import mixin
+
 
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__.default({
   routes: _routes_routes__WEBPACK_IMPORTED_MODULE_1__.routes //mode: 'history'
@@ -5423,6 +5484,36 @@ vue__WEBPACK_IMPORTED_MODULE_1__.default.filter("capitalize", function (value) {
   if (!value) return '';
   value = value.toString();
   return value.charAt(0).toUpperCase() + value.slice(1);
+});
+
+/***/ }),
+
+/***/ "./resources/js/helpers/mixin.js":
+/*!***************************************!*\
+  !*** ./resources/js/helpers/mixin.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+
+vue__WEBPACK_IMPORTED_MODULE_0__.default.mixin({
+  methods: {
+    confirm: function confirm(callback) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then(function (result) {
+        if (result.isConfirmed) callback(); //call this function to the removeCategory function in index page
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -69035,7 +69126,7 @@ var render = function() {
                 { staticClass: "card-header" },
                 [
                   _c("h3", { staticClass: "card-title" }, [
-                    _vm._v("Add New Category")
+                    _vm._v("Add New Post")
                   ]),
                   _vm._v(" "),
                   _c(
@@ -69044,7 +69135,7 @@ var render = function() {
                       staticClass: "btn btn-sm btn-info float-right",
                       attrs: { to: "/categories" }
                     },
-                    [_vm._v("Category List")]
+                    [_vm._v("Post List")]
                   )
                 ],
                 1
@@ -69269,7 +69360,7 @@ var staticRenderFns = [
               ]),
               _vm._v(" "),
               _c("li", { staticClass: "breadcrumb-item active" }, [
-                _vm._v("Create Category")
+                _vm._v("Create Post")
               ])
             ])
           ])
@@ -69583,112 +69674,313 @@ var render = function() {
       _vm._m(0),
       _vm._v(" "),
       _c("section", { staticClass: "content" }, [
-        _c("div", { staticClass: "card card-grey" }, [
-          _c(
-            "div",
-            { staticClass: "card-header" },
-            [
-              _c("h3", { staticClass: "card-title" }, [_vm._v("Post List")]),
-              _vm._v(" "),
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-md-12" }, [
+            _c("div", { staticClass: "card" }, [
               _c(
-                "router-link",
-                {
-                  staticClass: "btn btn-sm btn-info float-right",
-                  attrs: { to: "/create-post" }
-                },
-                [_vm._v("Add New Post")]
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c("div", { staticClass: "card-body" }, [
-            _c(
-              "table",
-              {
-                staticClass: "table table-bordered table-striped",
-                attrs: { id: "example1" }
-              },
-              [
-                _vm._m(1),
-                _vm._v(" "),
-                _c(
-                  "tbody",
-                  _vm._l(_vm.showPost, function(post, index) {
-                    return _c("tr", { key: index }, [
-                      _c("td", [_vm._v(_vm._s(++index))]),
-                      _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(post.title))]),
-                      _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(post.category.name))]),
-                      _vm._v(" "),
-                      _c("td", [
-                        _vm._v(_vm._s(_vm._f("subString")(post.content, 40)))
-                      ]),
-                      _vm._v(" "),
-                      _c("td", [
-                        _c("img", {
-                          attrs: { width: "60px", src: post.thumbnail }
+                "div",
+                { staticClass: "card-header" },
+                [
+                  _c("h3", { staticClass: "card-title" }, [
+                    _vm._v("Post List")
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "router-link",
+                    {
+                      staticClass: "btn btn-sm btn-info float-right",
+                      attrs: { to: "/create-post" }
+                    },
+                    [_vm._v("Add New Post")]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body" }, [
+                _c("table", { staticClass: "table table-bordered" }, [
+                  _c("thead", [
+                    _c("tr", [
+                      _c("th", [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.selectedAll,
+                              expression: "selectedAll"
+                            }
+                          ],
+                          attrs: {
+                            disabled: _vm.emptyData(),
+                            type: "checkbox"
+                          },
+                          domProps: {
+                            checked: Array.isArray(_vm.selectedAll)
+                              ? _vm._i(_vm.selectedAll, null) > -1
+                              : _vm.selectedAll
+                          },
+                          on: {
+                            click: _vm.selectAll,
+                            change: function($event) {
+                              var $$a = _vm.selectedAll,
+                                $$el = $event.target,
+                                $$c = $$el.checked ? true : false
+                              if (Array.isArray($$a)) {
+                                var $$v = null,
+                                  $$i = _vm._i($$a, $$v)
+                                if ($$el.checked) {
+                                  $$i < 0 &&
+                                    (_vm.selectedAll = $$a.concat([$$v]))
+                                } else {
+                                  $$i > -1 &&
+                                    (_vm.selectedAll = $$a
+                                      .slice(0, $$i)
+                                      .concat($$a.slice($$i + 1)))
+                                }
+                              } else {
+                                _vm.selectedAll = $$c
+                              }
+                            }
+                          }
                         })
                       ]),
                       _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(post.user.name))]),
+                      _c("th", [_vm._v("SL NO.")]),
                       _vm._v(" "),
-                      post.status == "draft"
-                        ? _c("td", [
-                            _c("span", { staticClass: "badge badge-success" }, [
-                              _vm._v(_vm._s(_vm._f("capitalize")(post.status)))
-                            ])
-                          ])
-                        : _vm._e(),
+                      _c("th", [_vm._v("Title")]),
                       _vm._v(" "),
-                      post.status == "published"
-                        ? _c("td", [
-                            _c("span", { staticClass: "badge badge-danger" }, [
-                              _vm._v(_vm._s(_vm._f("capitalize")(post.status)))
-                            ])
-                          ])
-                        : _vm._e(),
+                      _c("th", [_vm._v("Category")]),
                       _vm._v(" "),
-                      _c(
-                        "td",
-                        [
-                          _c(
-                            "router-link",
-                            {
-                              staticClass: "btn btn-sm btn-success",
-                              attrs: {
-                                to: "/edit-category/" + post.slug,
-                                title: "Edit"
-                              }
-                            },
-                            [_c("i", { staticClass: "fas fa-edit" })]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-sm btn-danger",
-                              attrs: { title: "Delete" },
+                      _c("th", [_vm._v("Content")]),
+                      _vm._v(" "),
+                      _c("th", [_vm._v("Thumbnail")]),
+                      _vm._v(" "),
+                      _c("th", [_vm._v("Create By")]),
+                      _vm._v(" "),
+                      _c("th", [_vm._v("Status")]),
+                      _vm._v(" "),
+                      _c("th", { staticStyle: { width: "130px" } }, [
+                        _vm._v("Action")
+                      ])
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "tbody",
+                    [
+                      _vm._l(_vm.showPost, function(post, index) {
+                        return _c("tr", { key: index }, [
+                          _c("td", [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.selected,
+                                  expression: "selected"
+                                }
+                              ],
+                              attrs: { type: "checkbox" },
+                              domProps: {
+                                value: post.id,
+                                checked: Array.isArray(_vm.selected)
+                                  ? _vm._i(_vm.selected, post.id) > -1
+                                  : _vm.selected
+                              },
                               on: {
-                                click: function($event) {
-                                  return _vm.removePost(post.slug)
+                                change: function($event) {
+                                  var $$a = _vm.selected,
+                                    $$el = $event.target,
+                                    $$c = $$el.checked ? true : false
+                                  if (Array.isArray($$a)) {
+                                    var $$v = post.id,
+                                      $$i = _vm._i($$a, $$v)
+                                    if ($$el.checked) {
+                                      $$i < 0 &&
+                                        (_vm.selected = $$a.concat([$$v]))
+                                    } else {
+                                      $$i > -1 &&
+                                        (_vm.selected = $$a
+                                          .slice(0, $$i)
+                                          .concat($$a.slice($$i + 1)))
+                                    }
+                                  } else {
+                                    _vm.selected = $$c
+                                  }
                                 }
                               }
-                            },
-                            [_c("i", { staticClass: "fas fa-trash" })]
+                            })
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(++index))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(post.title))]),
+                          _vm._v(" "),
+                          _c("td", [
+                            _vm._v(
+                              _vm._s(_vm._f("subString")(post.category.name, 2))
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(post.content))]),
+                          _vm._v(" "),
+                          _c("td", [
+                            _c("img", {
+                              attrs: { width: "80px", src: post.thumbnail }
+                            })
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(post.user.name))]),
+                          _vm._v(" "),
+                          post.status == "draft"
+                            ? _c("td", [
+                                _c(
+                                  "span",
+                                  { staticClass: "badge badge-danger" },
+                                  [_vm._v("Draft")]
+                                )
+                              ])
+                            : post.status == "published"
+                            ? _c("td", [
+                                _c(
+                                  "span",
+                                  { staticClass: "badge badge-success" },
+                                  [_vm._v("Published")]
+                                )
+                              ])
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _c(
+                            "td",
+                            [
+                              _c(
+                                "router-link",
+                                {
+                                  staticClass: "btn btn-sm btn-success",
+                                  attrs: { to: "/edit-post/" + post.slug }
+                                },
+                                [_vm._v("Edit")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-sm btn-danger",
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.removePost(post.slug)
+                                    }
+                                  }
+                                },
+                                [_vm._v("Delete")]
+                              )
+                            ],
+                            1
                           )
-                        ],
-                        1
-                      )
-                    ])
-                  }),
-                  0
-                ),
-                _vm._v(" "),
-                _vm._m(2)
-              ]
-            )
+                        ])
+                      }),
+                      _vm._v(" "),
+                      _vm.emptyData() ? _c("tr", [_vm._m(1)]) : _vm._e(),
+                      _vm._v(" "),
+                      !_vm.emptyData()
+                        ? _c("tr", [
+                            _c("td", { attrs: { colspan: "12" } }, [
+                              _c("div", { staticClass: "dropdown" }, [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn btn-info dropdown-toggle",
+                                    attrs: {
+                                      disabled: !_vm.isSelected,
+                                      type: "button",
+                                      id: "dropdownMenuButton1",
+                                      "data-toggle": "dropdown"
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                                            Actions\n                                        "
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "ul",
+                                  {
+                                    staticClass: "dropdown-menu",
+                                    attrs: {
+                                      "aria-labelledby": "dropdownMenuButton1"
+                                    }
+                                  },
+                                  [
+                                    _c("li", [
+                                      _c(
+                                        "button",
+                                        {
+                                          staticClass: "dropdown-item",
+                                          attrs: { type: "button" },
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.removeItems(
+                                                _vm.selected
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [_vm._v("Remove All")]
+                                      )
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("li", [
+                                      _c(
+                                        "button",
+                                        {
+                                          staticClass: "dropdown-item",
+                                          attrs: { type: "button" },
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.changeStatus(
+                                                _vm.selected,
+                                                "published"
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [_vm._v("Published")]
+                                      )
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("li", [
+                                      _c(
+                                        "button",
+                                        {
+                                          staticClass: "dropdown-item",
+                                          attrs: { type: "button" },
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.changeStatus(
+                                                _vm.selected,
+                                                "draft"
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [_vm._v("Draft")]
+                                      )
+                                    ])
+                                  ]
+                                )
+                              ])
+                            ])
+                          ])
+                        : _vm._e()
+                    ],
+                    2
+                  )
+                ])
+              ])
+            ])
           ])
         ])
       ])
@@ -69726,47 +70018,9 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", [
-        _c("th", [_vm._v("SL NO.")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Title")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Category")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Content")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Thumbnail")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Create By")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Status")]),
-        _vm._v(" "),
-        _c("th", { staticStyle: { width: "130px" } }, [_vm._v("Action")])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("tfoot", [
-      _c("tr", [
-        _c("th", [_vm._v("SL NO.")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Title")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Category")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Content")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Thumbnail")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Create By")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Status")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Action")])
+    return _c("td", { attrs: { colspan: "12" } }, [
+      _c("h5", { staticClass: "text-center text-danger" }, [
+        _vm._v(" Data Not Found!")
       ])
     ])
   }

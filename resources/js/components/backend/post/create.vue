@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Create Category</li>
+              <li class="breadcrumb-item active">Create Post</li>
             </ol>
           </div>
         </div>
@@ -29,8 +29,8 @@
          <!-- Horizontal Form -->
             <div class="card card-info">
               <div class="card-header">
-                <h3 class="card-title">Add New Category</h3>
-                 <router-link to="/categories" class="btn btn-sm btn-info float-right">Category List</router-link>
+                <h3 class="card-title">Add New Post</h3>
+                 <router-link to="/categories" class="btn btn-sm btn-info float-right">Post List</router-link>
               </div>
               <!-- /.card-header -->
               <!-- form start -->
