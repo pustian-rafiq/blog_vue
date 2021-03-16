@@ -49,7 +49,10 @@ const store = new Vuex.Store(
 import {filter} from './filter/filter'
 //import mixin
 import './helpers/mixin'
+//import Ckeditor 5
+import CKEditor from 'ckeditor4-vue';
 
+Vue.use( CKEditor );
   const router = new VueRouter({
     routes,
     //mode: 'history'

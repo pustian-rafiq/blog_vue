@@ -82,21 +82,21 @@
                with font-awesome or any other icon font library -->
 
           <li class="nav-item">
-            <router-link to="/home" exact class="nav-link">
+            <router-link to="/home" exact class="nav-link" active-class="active">
               <i class="nav-icon fas fa-th"></i>
               <p> Dashboard </p>
             </router-link>
           </li>
 
           <li class="nav-item">
-            <router-link to="/categories"  class="nav-link">
+            <router-link to="/categories"  class="nav-link" active-class="active">
               <i class="nav-icon fas fa-th"></i>
               <p>Category </p>
             </router-link>
           </li>
 
           <li class="nav-item">
-            <router-link to="/posts"  class="nav-link">
+            <router-link to="/posts"  class="nav-link" active-class="active">
               <i class="nav-icon fas fa-th"></i>
               <p>Post </p>
             </router-link>
@@ -143,7 +143,7 @@
 <script src="{{ asset('assets/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
 
 
-<script>
+{{-- <script>
     $(function () {
       $("#example1").DataTable({
         "responsive": true,
@@ -159,6 +159,6 @@
         "responsive": true,
       });
     });
-  </script>
+  </script> --}}
 </body>
 </html>

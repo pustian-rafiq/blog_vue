@@ -33,14 +33,18 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 //category routes from vuex
 Route::post('/add-category', [CategoryController::class, 'store']);
 Route::get('/get-categories', [CategoryController::class, 'index']);
+Route::get('/get-active-categories', [CategoryController::class, 'getActiveCategories']);
 Route::get('/remove-category/{id}', [CategoryController::class, 'destroy']);
 Route::get('/edit-category/{slug}', [CategoryController::class, 'edit']);
 Route::post('/update-category', [CategoryController::class, 'update']);
 //remove all categories using checkbox
 Route::post('/categories/remove-items', [CategoryController::class, 'removeItems']);
 Route::post('/categories/change-status', [CategoryController::class, 'changeStatus']);
+
+
+
 //Post routes from vuex
-Route::post('/add-post', [PostController::class, 'store']);
+Route::post('/create-post', [PostController::class, 'store']);
 Route::get('/get-posts', [PostController::class, 'index']);
 Route::get('/remove-post/{slug}', [PostController::class, 'destroy']);
 Route::get('/edit-post/{slug}', [PostController::class, 'edit']);

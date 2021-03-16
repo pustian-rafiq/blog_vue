@@ -60,8 +60,11 @@
                         <!-- this filter method subString is used for showing fied character -->
                         <!-- <td>{{ category.name | subString(2)}}</td> -->
                         <td>{{ post.title }}</td>
-                        <td>{{ post.category.name | subString(2) }}</td>
-                        <td>{{ post.content }}</td>
+                        <td>{{ post.category.name | subString(15) }}</td>
+                        <!-- <td>{{ post.content | subString(25)}}</td> -->
+                        <!-- use v-html for discard html tag when display data -->
+                        <td v-html="post.content "> </td>
+                        <!-- <td><img width="80px" :src="filename(post.thumbnail)"></td> -->
                         <td><img width="80px" :src="post.thumbnail"></td>
                         <td>{{post.user.name}}</td>
                         <td  v-if="post.status=='draft'"><span class="badge badge-danger">Draft</span></td>
@@ -169,7 +172,7 @@
                     })
 
 
-            
+
         });
 
 
@@ -219,6 +222,10 @@
              }).catch((error)=>{
 
              })
+         },
+         //To show image from our local folder
+         filename:function(name){
+             return 'uploads/posts/'+name;
          }
      }
  }
