@@ -161,4 +161,14 @@ class CategoryController extends Controller
         $success = $sl > 0;
         return response()->json(['success'=> $success, 'total' => $sl]);
     }
+
+
+    //Get all the top active categories for Frontend Part
+    public function getActiveTopCategories()
+    {
+        $categories =  Category::where('status',1)->get();
+        return response()->json([
+            'categories' => $categories,
+        ], 200);
+    }
 }

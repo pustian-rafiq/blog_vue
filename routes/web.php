@@ -16,7 +16,7 @@ use App\Http\Controllers\Admin\CategoryController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('site.layouts');
 });
 
 Auth::routes();
@@ -52,3 +52,10 @@ Route::post('/update-post', [PostController::class, 'update']);
 //remove all categories using checkbox
 Route::post('/posts/remove-items', [PostController::class, 'removeItems']);
 Route::post('/posts/change-status', [PostController::class, 'changeStatus']);
+
+
+//Routes for frontend part
+Route::get('/get-active-top-categories', [CategoryController::class, 'getActiveTopCategories']);
+Route::get('/get-all-posts', [PostController::class, 'getAllPosts']);
+Route::get('/get-post-details/{slug}', [PostController::class, 'getPostDetails']);
+Route::get('/get-category-posts/{slug}', [PostController::class, 'getCategoryPosts']);

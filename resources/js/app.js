@@ -7,7 +7,7 @@ window.Vue = require('vue').default;
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 //Import Routes
-import {routes} from './routes/routes'
+import {routes} from './routes/backend/routes'
 
 //Import vform
 import { Form, HasError, AlertError } from 'vform'

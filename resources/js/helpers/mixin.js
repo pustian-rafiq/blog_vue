@@ -30,6 +30,14 @@ Vue.mixin({
                   toastr.error('Image must be png/jpg format!',{timeout: 5000});
         }
 
+    },
+    subStrWithHtml: function(text, length, extension){
+        if(text > length){
+            return text.substring(0,length) + extension;
+        }else{
+            return text.substring(0,length) + '';
+        }
+
     }
 }
 

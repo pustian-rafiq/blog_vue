@@ -124,7 +124,7 @@
       }
   },
    mounted(){
-        this.getPost();
+         this.getPost();
          this.$store.dispatch("getActiveCategories");
         // this getActiveCategories goes to action prperty of the store.js file with the same name
      },

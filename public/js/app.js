@@ -5349,6 +5349,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "Index",
   data: function data() {
@@ -5450,7 +5451,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
-/* harmony import */ var _routes_routes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./routes/routes */ "./resources/js/routes/routes.js");
+/* harmony import */ var _routes_backend_routes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./routes/backend/routes */ "./resources/js/routes/backend/routes.js");
 /* harmony import */ var vform__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vform */ "./node_modules/vform/dist/vform.common.js");
 /* harmony import */ var vform__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vform__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
@@ -5513,7 +5514,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_5__.default.Store(_store_store__WE
 
 Vue.use((ckeditor4_vue__WEBPACK_IMPORTED_MODULE_9___default()));
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__.default({
-  routes: _routes_routes__WEBPACK_IMPORTED_MODULE_1__.routes //mode: 'history'
+  routes: _routes_backend_routes__WEBPACK_IMPORTED_MODULE_1__.routes //mode: 'history'
 
 });
 var app = new Vue({
@@ -5589,7 +5590,8 @@ vue__WEBPACK_IMPORTED_MODULE_1__.default.filter("time", function (a) {
   //for this format---	March 10th 2021, 12:15:45 pm
   // return moment(a).format('MMMM Do YYYY, h:mm:ss a');
   //for this format
-  return moment__WEBPACK_IMPORTED_MODULE_0___default()().format('MMMM Do YYYY, h:mm:ss a');
+  //https://momentjs.com/docs/#/displaying/format/ ------ various format get here
+  return moment__WEBPACK_IMPORTED_MODULE_0___default()(a).format('MMMM D, YYYY, h:mm:ss a'); //return moment().format('MMMM Do YYYY');
 }); //use this filter to show fixed length of a long string
 
 vue__WEBPACK_IMPORTED_MODULE_1__.default.filter("subString", function (content, length) {
@@ -5649,16 +5651,23 @@ vue__WEBPACK_IMPORTED_MODULE_0__.default.mixin({
           timeout: 5000
         });
       }
+    },
+    subStrWithHtml: function subStrWithHtml(text, length, extension) {
+      if (text > length) {
+        return text.substring(0, length) + extension;
+      } else {
+        return text.substring(0, length) + '';
+      }
     }
   }
 });
 
 /***/ }),
 
-/***/ "./resources/js/routes/routes.js":
-/*!***************************************!*\
-  !*** ./resources/js/routes/routes.js ***!
-  \***************************************/
+/***/ "./resources/js/routes/backend/routes.js":
+/*!***********************************************!*\
+  !*** ./resources/js/routes/backend/routes.js ***!
+  \***********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -5666,13 +5675,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "routes": () => (/* binding */ routes)
 /* harmony export */ });
-/* harmony import */ var _components_backend_home__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/backend/home */ "./resources/js/components/backend/home.vue");
-/* harmony import */ var _components_backend_category_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/backend/category/index */ "./resources/js/components/backend/category/index.vue");
-/* harmony import */ var _components_backend_category_create__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/backend/category/create */ "./resources/js/components/backend/category/create.vue");
-/* harmony import */ var _components_backend_category_edit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/backend/category/edit */ "./resources/js/components/backend/category/edit.vue");
-/* harmony import */ var _components_backend_post_index__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../components/backend/post/index */ "./resources/js/components/backend/post/index.vue");
-/* harmony import */ var _components_backend_post_create__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../components/backend/post/create */ "./resources/js/components/backend/post/create.vue");
-/* harmony import */ var _components_backend_post_edit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../components/backend/post/edit */ "./resources/js/components/backend/post/edit.vue");
+/* harmony import */ var _components_backend_home__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../components/backend/home */ "./resources/js/components/backend/home.vue");
+/* harmony import */ var _components_backend_category_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../components/backend/category/index */ "./resources/js/components/backend/category/index.vue");
+/* harmony import */ var _components_backend_category_create__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../components/backend/category/create */ "./resources/js/components/backend/category/create.vue");
+/* harmony import */ var _components_backend_category_edit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../components/backend/category/edit */ "./resources/js/components/backend/category/edit.vue");
+/* harmony import */ var _components_backend_post_index__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../components/backend/post/index */ "./resources/js/components/backend/post/index.vue");
+/* harmony import */ var _components_backend_post_create__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../components/backend/post/create */ "./resources/js/components/backend/post/create.vue");
+/* harmony import */ var _components_backend_post_edit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../components/backend/post/edit */ "./resources/js/components/backend/post/edit.vue");
  //categories routes here
 
 
@@ -5730,6 +5739,12 @@ __webpack_require__.r(__webpack_exports__);
     },
     posts: function posts(state) {
       return state.fetchPost;
+    },
+    getActiveTopCategory: function getActiveTopCategory(state) {
+      return state.fetchCategory;
+    },
+    countCategory: function countCategory(state) {
+      return state.fetchCategory;
     }
   },
   actions: {
@@ -5746,6 +5761,18 @@ __webpack_require__.r(__webpack_exports__);
     },
     getPosts: function getPosts(data) {
       axios.get("get-posts").then(function (response) {
+        data.commit("fetchPosts", response.data.posts); //ekhaner posts hoilo Postcontroller er index er posts variable
+      })["catch"](function (error) {});
+    },
+    //Frontend methods for categoryIds
+    getActiveTopCategories: function getActiveTopCategories(data) {
+      axios.get("get-active-top-categories").then(function (response) {
+        data.commit("fetchCategories", response.data.categories); //ekhaner posts hoilo Postcontroller er index er posts variable
+      })["catch"](function (error) {});
+    },
+    //Frontend methods for showing posts
+    getAllPosts: function getAllPosts(data) {
+      axios.get("get-all-posts").then(function (response) {
         data.commit("fetchPosts", response.data.posts); //ekhaner posts hoilo Postcontroller er index er posts variable
       })["catch"](function (error) {});
     }
@@ -69741,7 +69768,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("p", [
           _vm._v(
-            "This component is ported using router-vue. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Excepturi amet tempore dolor et quibusdam molestiae est nesciunt exercitationem commodi, \n    sit animi fugiat possimus magni veniam minus ab. Ut, vel impedit!"
+            "This component is ported using router-vue. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Excepturi amet tempore dolor et quibusdam molestiae est nesciunt exercitationem commodi,\n      sit animi fugiat possimus magni veniam minus ab. Ut, vel impedit!"
           )
         ])
       ])
@@ -70780,9 +70807,15 @@ var render = function() {
                             )
                           ]),
                           _vm._v(" "),
-                          _c("td", {
-                            domProps: { innerHTML: _vm._s(post.content) }
-                          }),
+                          _c("td", [
+                            _c("p", {
+                              domProps: {
+                                innerHTML: _vm._s(
+                                  _vm.subStrWithHtml(post.content, 200, ".....")
+                                )
+                              }
+                            })
+                          ]),
                           _vm._v(" "),
                           _c("td", [
                             _c("img", {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\Category;
 use Image;
 //use Intervention\Image\ImageManagerStatic as Image;
 class PostController extends Controller
@@ -162,4 +163,38 @@ public function changeStatus(Request $request){
     $success = $sl > 0;
     return response()->json(['success'=> $success, 'total' => $sl]);
 }
+//Get th post of Frontend page
+
+public function getAllPosts()
+{
+    $posts = Post::with('category','user')
+            ->where('status','published')
+            ->orderBy('id','DESC')
+            ->paginate(6);
+            // return response()->json([
+            //     'posts' => $posts,
+            // ], 200);
+return $posts;
+    //$posts = Post::paginate(3);
+}
+//Get Post details for frontend page
+public function getPostDetails($slug)
+{
+    //get the getPosts
+    $post = Post::with('category','user')->where('slug',$slug)->first();
+    return response()->json(['post' => $post],200);
+}
+
+//Get Post details for frontend page
+public function getCategoryPosts($slug) //This slug is category slug so first we find category id using this slug
+{
+    $category = Category::where('slug',$slug)->first();
+    //get the getPosts
+    $posts = Post::with('category','user')
+             ->where('category_id',$category->id)
+             ->where('status','published')
+             ->orderBy('id','DESC')->get();
+             return response()->json(['posts' => $posts],200);
+}
+
 }

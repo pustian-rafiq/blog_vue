@@ -63,7 +63,8 @@
                         <td>{{ post.category.name | subString(15) }}</td>
                         <!-- <td>{{ post.content | subString(25)}}</td> -->
                         <!-- use v-html for discard html tag when display data -->
-                        <td v-html="post.content "> </td>
+                        <td> <p v-html="subStrWithHtml(post.content,200, '.....')">  </p> </td>
+                         <!-- <p v-html="subStrWithHtml(post.content,200, '.....')">  </p> -->
                         <!-- <td><img width="80px" :src="filename(post.thumbnail)"></td> -->
                         <td><img width="80px" :src="post.thumbnail"></td>
                         <td>{{post.user.name}}</td>
